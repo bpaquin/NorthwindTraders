@@ -97,7 +97,7 @@ namespace Northwind.WebUI
             app.UseSwaggerUi3(settings =>
             {
                 settings.Path = "/api";
-                //    settings.DocumentPath = "/api/specification.json";   Enable when NSwag.MSBuild is upgraded to .NET Core 3.0
+                settings.DocumentPath = "/api/specification.json";   //Enable when NSwag.MSBuild is upgraded to .NET Core 3.0
             });
 
             app.UseRouting();
