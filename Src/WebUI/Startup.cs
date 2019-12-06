@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,8 @@ using Northwind.Application;
 using Northwind.Application.Common.Interfaces;
 using Northwind.WebUI.Common;
 using Northwind.WebUI.Services;
+using NSwag;
+using NSwag.Generation.Processors.Security;
 
 namespace Northwind.WebUI
 {
@@ -65,6 +68,18 @@ namespace Northwind.WebUI
             services.AddOpenApiDocument(configure =>
             {
                 configure.Title = "Northwind Traders API";
+
+                // bp added 2019-
+                configure.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
+                {
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Description = "Type into the textbox: Bearer {your JWT token}."
+                });
+
+                configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
+
             });
 
             _services = services;
@@ -91,7 +106,6 @@ namespace Northwind.WebUI
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
             app.UseOpenApi();
 
             app.UseSwaggerUi3(settings =>
